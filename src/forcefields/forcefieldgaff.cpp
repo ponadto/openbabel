@@ -1388,11 +1388,10 @@ namespace OpenBabel
 
     IF_OBFF_LOGLVL_LOW {
       OBFFLog("\nA T O M   T Y P E S\n\n");
-      OBFFLog("IDX\tTYPE\tRING\n");
+      OBFFLog("IDX\tTYPE\n");
 
       FOR_ATOMS_OF_MOL (a, _mol) {
-        snprintf(_logbuf, BUFF_SIZE, "%d\t%s\t%s\n", a->GetIdx(), a->GetType(),
-	  (a->IsInRing() ? (a->IsAromatic() ? "AR" : "AL") : "NO"));
+        snprintf(_logbuf, BUFF_SIZE, "%d\t%s\n", a->GetIdx(), a->GetType());
         OBFFLog(_logbuf);
       }
 
@@ -1456,6 +1455,46 @@ namespace OpenBabel
 
     return energy;
   }
+  
+// BEGIN MD
+// You first need to call Energy(true)
+  std::string OBForceFieldGaff::GetVariousForces() {
+    std::ostringstream stringStream;
+
+    for (int i = 0; i < _vdwcalculations.size(); ++i) {
+      stringStream << "vdw ";
+      stringStream << _vdwcalculations[i].idx_a << " " << _vdwcalculations[i].idx_b << " " << _vdwcalculations[i].force_a[0] << " " << _vdwcalculations[i].force_a[1] << " " << _vdwcalculations[i].force_a[2] << " " << _vdwcalculations[i].force_b[0] << " " << _vdwcalculations[i].force_b[1] << " " << _vdwcalculations[i].force_b[2] << "\n";    
+    }
+
+    for (int i = 0; i < _electrostaticcalculations.size(); ++i) {
+      stringStream << "ele ";
+      stringStream << _electrostaticcalculations[i].idx_a << " " << _electrostaticcalculations[i].idx_b << " " << _electrostaticcalculations[i].force_a[0] << " " << _electrostaticcalculations[i].force_a[1] << " " << _electrostaticcalculations[i].force_a[2] << " " << _electrostaticcalculations[i].force_b[0] << " " << _electrostaticcalculations[i].force_b[1] << " " << _electrostaticcalculations[i].force_b[2] << "\n";    
+    }
+
+    for (int i = 0; i < _bondcalculations.size(); ++i) {
+      stringStream << "bonds ";
+      stringStream << _bondcalculations[i].idx_a << " " << _bondcalculations[i].idx_b << " " << _bondcalculations[i].force_a[0] << " " << _bondcalculations[i].force_a[1] << " " << _bondcalculations[i].force_a[2] << " " << _bondcalculations[i].force_b[0] << " " << _bondcalculations[i].force_b[1] << " " << _bondcalculations[i].force_b[2] << "\n";    
+    }
+
+    for (int i = 0; i < _anglecalculations.size(); ++i) {
+      stringStream << "angle ";
+      stringStream << _anglecalculations[i].idx_a << " " << _anglecalculations[i].idx_b << " " << " " << _anglecalculations[i].idx_c << " " << _anglecalculations[i].force_a[0] << " " << _anglecalculations[i].force_a[1] << " " << _anglecalculations[i].force_a[2] << " " << _anglecalculations[i].force_b[0] << " " << _anglecalculations[i].force_b[1] << " " << _anglecalculations[i].force_b[2] << " " << _anglecalculations[i].force_c[0] << " " << _anglecalculations[i].force_c[1] << " " << _anglecalculations[i].force_c[2] << "\n";    
+    }
+
+    for (int i = 0; i < _torsioncalculations.size(); ++i) {
+      stringStream << "tors ";
+      stringStream << _torsioncalculations[i].idx_a << " " << _torsioncalculations[i].idx_b << " " << " " << _torsioncalculations[i].idx_c << " " << _torsioncalculations[i].idx_d << " " << _torsioncalculations[i].force_a[0] << " " << _torsioncalculations[i].force_a[1] << " " << _torsioncalculations[i].force_a[2] << " " << _torsioncalculations[i].force_b[0] << " " << _torsioncalculations[i].force_b[1] << " " << _torsioncalculations[i].force_b[2] << " " << _torsioncalculations[i].force_c[0] << " " << _torsioncalculations[i].force_c[1] << " " << _torsioncalculations[i].force_c[2] << " " << _torsioncalculations[i].force_d[0] << " " << _torsioncalculations[i].force_d[1] << " " << _torsioncalculations[i].force_d[2] << "\n";    
+    }
+
+    for (int i = 0; i < _oopcalculations.size(); ++i) {
+      stringStream << "oop ";
+      stringStream << _oopcalculations[i].idx_a << " " << _oopcalculations[i].idx_b << " " << " " << _oopcalculations[i].idx_c << " " << _oopcalculations[i].idx_d << " " << _oopcalculations[i].force_a[0] << " " << _oopcalculations[i].force_a[1] << " " << _oopcalculations[i].force_a[2] << " " << _oopcalculations[i].force_b[0] << " " << _oopcalculations[i].force_b[1] << " " << _oopcalculations[i].force_b[2] << " " << _oopcalculations[i].force_c[0] << " " << _oopcalculations[i].force_c[1] << " " << _oopcalculations[i].force_c[2] << " " << _oopcalculations[i].force_d[0] << " " << _oopcalculations[i].force_d[1] << " " << _oopcalculations[i].force_d[2] << "\n";    
+    }
+
+    return stringStream.str();
+}
+// END MD
+  
 
   bool OBForceFieldGaff::ValidateGradients ()
   {

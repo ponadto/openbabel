@@ -162,6 +162,11 @@ namespace OpenBabel
       //! \return total energy
       double Energy(bool gradients = true);
       //! Returns the bond stretching energy
+
+// BEGIN MD
+      std::string GetVariousForces();
+// END MD
+
       template<bool> double E_Bond();
       double E_Bond(bool gradients = true)
       {
